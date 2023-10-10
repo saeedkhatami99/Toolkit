@@ -20,10 +20,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Source\main.cpp" />
+    <ClCompile Include="Source\threadlib.cpp" />
+    <ClCompile Include="Source\workload.cpp" />
     <ClCompile Include="threadlib.cpp" />
     <ClCompile Include="workload.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Header\threadlib.hpp" />
+    <ClInclude Include="Header\workload.hpp" />
     <ClInclude Include="threadlib.hpp" />
     <ClInclude Include="workload.hpp" />
   </ItemGroup>
