@@ -13,8 +13,20 @@ int main()
     thread* threads = new thread[thread_information.amount];
     
     thread_lib::print_info(thread_information);
-    thread_lib::run_workload(thread_information, threads);
+    
+#ifdef _DEBUG
+
+    thread_lib::run_workload(thread_information, threads, true);
+    Sleep(10000);  // added for testing since there is almost 0 load and operations execute quickly
 
     return 0;
+
+#endif
+    
+    thread_lib::run_workload(thread_information, threads, false);
+    Sleep(10000);   // added for testing since there is almost 0 load and operations execute quickly
+
+    return 0;
+
 }
 
