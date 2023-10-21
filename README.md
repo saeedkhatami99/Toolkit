@@ -1,4 +1,4 @@
-# Multithread Base
+# Multithread
 A fundamental starting point for newcomers to C++ programming who wish to delve into the world of multithreading and understand how threads interact with your workloads.
 
 # What's Included?
