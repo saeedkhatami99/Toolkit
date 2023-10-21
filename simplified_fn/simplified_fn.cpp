@@ -1,5 +1,6 @@
 #include<iostream>
 #include<chrono>
+#include <Windows.h>
 #include "simplified_fn.hpp"
 
 int smpl::get_execution_time(void (*fn)(int), int threads) {
@@ -14,5 +15,17 @@ int smpl::get_execution_time(void (*fn)(int), int threads) {
 	return int_usec.count();
 #endif;
 	return 1;
+	
+}
 
+void smpl::sleep_sec(int s) {
+
+	int conversion_to_s = s * 1000;
+	Sleep(conversion_to_s);
+
+}
+
+void smpl::spacer() {
+
+	std::cout << "==============================================================\n";
 }

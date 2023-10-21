@@ -2,35 +2,35 @@
 #include <chrono>
 
 void workload1() {
-	cout << "Workload 1";
+	cout << "Workload 1\n";
 }
 
 void workload2() {
-	cout << "Workload 2";
+	cout << "Workload 2\n";
 }
 
 void workload3() {
-	cout << "Workload 3";
+	cout << "Workload 3\n";
 }
 
 void workload4() {
-	cout << "Workload 4";
+	cout << "Workload 4\n";
 }
 
 void workload5() {
-	cout << "Workload 5";
+	cout << "Workload 5\n";
 }
 
 void workload6() {
-	cout << "Workload 6";
+	cout << "Workload 6\n";
 }
 
 void workload7() {
-	cout << "Workload 7";
+	cout << "Workload 7\n";
 }
 
 void workload8() {
-	cout << "Workload 8";
+	cout << "Workload 8\n";
 }
 
 void workload_selector(int index) {

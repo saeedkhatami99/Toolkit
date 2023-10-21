@@ -8,16 +8,18 @@
 
 using namespace std;
 
+
+
 std::string thread_lib::get_cpu_name()
 {
 	int cpu_information[4] = { -1 };
 	char cpu_string[0x40];
 	__cpuid(cpu_information, 0x80000000);
-	unsigned int nExIds = cpu_information[0];
+	unsigned int ex_ids = cpu_information[0];
 
 	memset(cpu_string, 0, sizeof(cpu_string));
 
-	for (int i = 0x80000000; i <= nExIds; ++i)
+	for (int i = 0x80000000; i <= ex_ids; ++i)
 	{
 		__cpuid(cpu_information, i);
 		if (i == 0x80000002)
@@ -35,13 +37,14 @@ int thread_lib::calculate_threads() {
 
 	SYSTEM_INFO system_info;
 	GetSystemInfo(&system_info);
-	int threads = system_info.dwNumberOfProcessors; // cores
+	int threads = system_info.dwNumberOfProcessors; 
 	return threads;
-	//thread* available_threads = new thread[cores];
+	
 
 }
 
 int thread_lib::set_custom_affinity() {
+
 	cout << "[debug] do you wish to set custom affinity of this process? Y/N";
 	char ans;
 	cin >> ans;
@@ -57,13 +60,15 @@ int thread_lib::set_custom_affinity() {
 
 }
 
+
+
 int thread_lib::calculate_affinity_req(int threads) {
 
 	cout << "debug -> threads = " << threads << endl;
 
 	int sqr = threads - 1;
 
-	return pow(2, sqr) * 2 - 1;
+	return pow(2, sqr) * 2 - 1; 
 }
 
 thread_info thread_lib::initialize_info() {
@@ -78,10 +83,13 @@ thread_info thread_lib::initialize_info() {
 
 }
 
+
+
 void thread_lib::assign_fix(int i) {
+
 #ifdef _DEBUG
 	auto result = smpl::get_execution_time(workload_selector, i);
-	std::cout << " -> [debug] " << result << " microseconds." << std::endl;
+	std::cout << " -> [debug] execution time: " << result << " microseconds" << std::endl;
 	return;
 #endif
 	workload_selector(i);
@@ -95,21 +103,18 @@ void thread_lib::print_info(thread_info thread_object) {
 
 }
 
-void empty_fn(int a) {
-
-	cout << "Test " << a << endl;
-
-}
-
 void thread_lib::run_workload(thread_info thread_object, thread threads[], bool custom_affinity) {
+
 #ifdef _DEBUG
 	if (custom_affinity)
 	{;
 		int affinity_req = thread_lib::calculate_affinity_req(thread_lib::set_custom_affinity());
 		cout << "[debug] affinity_req = " << affinity_req << endl;
 		::SetProcessAffinityMask(GetCurrentProcess(), affinity_req);
-	} //0xf);
+	} 
 #endif
+
+	smpl::spacer();  
 
 	for (int i = 0; i < thread_object.amount; i++) {
 
@@ -117,5 +122,7 @@ void thread_lib::run_workload(thread_info thread_object, thread threads[], bool 
 		threads[i].join();
 
 	}
+
+	smpl::spacer();
 
 }
