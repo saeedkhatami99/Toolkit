@@ -28,4 +28,5 @@ void smpl::sleep_sec(int s) {
 void smpl::spacer() {
 
 	std::cout << "==============================================================\n";
+	//really retarded, but looks cleaner overall
 }

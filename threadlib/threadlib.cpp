@@ -8,7 +8,7 @@
 
 using namespace std;
 
-
+// cpu name fn and calculate threads/cores grabbed from an old college project, posted on same github
 
 std::string thread_lib::get_cpu_name()
 {
@@ -37,9 +37,9 @@ int thread_lib::calculate_threads() {
 
 	SYSTEM_INFO system_info;
 	GetSystemInfo(&system_info);
-	int threads = system_info.dwNumberOfProcessors; 
+	int threads = system_info.dwNumberOfProcessors; // cores
 	return threads;
-	
+	//thread* available_threads = new thread[cores];
 
 }
 
@@ -60,7 +60,7 @@ int thread_lib::set_custom_affinity() {
 
 }
 
-
+// this function is used for ::SetProcessAffinityMask(GetCurrentProcess(), affinity), to be precise for the bitmask calculation
 
 int thread_lib::calculate_affinity_req(int threads) {
 
@@ -68,7 +68,7 @@ int thread_lib::calculate_affinity_req(int threads) {
 
 	int sqr = threads - 1;
 
-	return pow(2, sqr) * 2 - 1; 
+	return pow(2, sqr) * 2 - 1; // i just push this as decimal, no need to mess around with hex 
 }
 
 thread_info thread_lib::initialize_info() {
@@ -83,7 +83,7 @@ thread_info thread_lib::initialize_info() {
 
 }
 
-
+// insanely dumb fix for assigning functions to a certain thread, but works
 
 void thread_lib::assign_fix(int i) {
 
@@ -103,6 +103,14 @@ void thread_lib::print_info(thread_info thread_object) {
 
 }
 
+/*
+void empty_fn(int a) {
+
+	cout << "Test " << a << endl;     no need for this, will remove it if I remember..
+
+}
+*/
+
 void thread_lib::run_workload(thread_info thread_object, thread threads[], bool custom_affinity) {
 
 #ifdef _DEBUG
@@ -111,10 +119,10 @@ void thread_lib::run_workload(thread_info thread_object, thread threads[], bool 
 		int affinity_req = thread_lib::calculate_affinity_req(thread_lib::set_custom_affinity());
 		cout << "[debug] affinity_req = " << affinity_req << endl;
 		::SetProcessAffinityMask(GetCurrentProcess(), affinity_req);
-	} 
+	} //0xf);
 #endif
 
-	smpl::spacer();  
+	smpl::spacer();  // aesthetics ya
 
 	for (int i = 0; i < thread_object.amount; i++) {
 

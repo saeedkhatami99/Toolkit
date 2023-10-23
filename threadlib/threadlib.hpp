@@ -15,7 +15,7 @@ namespace thread_lib {
 
 	std::string get_cpu_name();
 	int calculate_threads();
-	int set_custom_affinity();  
+	int set_custom_affinity();  // dbg fn mostly
 	int calculate_affinity_req(int threads);
 	thread_info initialize_info();
 	void assign_fix(int i);
