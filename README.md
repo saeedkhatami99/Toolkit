@@ -1,19 +1,33 @@
-# Multithread Foundation
-This foundational framework is tailored for aspiring C++ programmers who are taking their initial steps into the world of multithreading. It offers a comprehensive introduction to the fundamentals of threads and their interaction with your computing tasks.
+# Multithread-Base
+Multithread base for beginners who are starting to code in C++ and are
+willing to learn the basics about threads and how threads work with your
+workloads
 
-# What's Included?
-At its core, this package provides a standard console application template as offered by Visual Studio. The key distinction here is that every operation you initiate is executed concurrently on distinct threads, effectively leveraging the processing power corresponding to the number of CPU cores you possess. Additionally, this package incorporates some rudimentary content related to game hacking, aimed at delivering a basic grasp of both external and internal game manipulation techniques.
+# What's included?
+Simple as it can be, default console app template from Visual Studio.
+Difference is that now everything you run runs on separate threads and is
+appropriately split on your_amount_of_cpu_cores number of threads. Some gamehacking
+stuff is included in here for some really basic understanding on both external and internal
+game hacking. 
 
-# Feature Highlights
-- A user-friendly interface with automated multithreading capabilities, including custom CPU affinity support.
-- Memory management library for attaching/detaching from a process, reading/writing process memory, and external signature scanning.
-- Threading library for efficient management of threads.
-- DLL file injection methods (LoadLibrary and manual mapping) alongside shellcode injection, albeit with hardcoded shellcode.
-- A comprehensive logging system to track your application's behavior.
-- Simplified function wrappers, designed to assist newcomers in grasping concepts like function pointers.
+# Feature list
+- Simple interface with automated multithreading (with custom CPU affinity support)
+- Memory library (attaching/detaching from a process, WPM/RPM  and finding signatures externally)
+- Threading library
+- Injection of DLL files (loadlibrary and manualmap, shellcode injection included with only flaw being hardcoded shellcode)
+- Logging system 
+- Overlay for drawing stuff (borderless/fullscreen windowed)
+- Simple rendering functions to use with overlay (line, rect, filled rect)
+- Some simplified function wrappers (mostly easy learning stuff for people like function pointers etc.)
 
-# Upcoming Developments
-In the pipeline are plans for integrating a straightforward driver communication method. This includes the addition of a basic driver source code (sans certification), though it will necessitate disabling certain Windows security features. A practical example showcasing the inner workings of these components will also be included.
+# Future updates
+- Addition of a simple driver communication method
+- Simple driver source (no certificate so you will have to disable some stuff in Windows)
+- Example on how these two things actually work
 
-# Is There Anything Missing from This Framework?
-It's important to note that this framework was created primarily for educational purposes, resembling a skeleton structure for basic threading operations. It is not intended for intricate threading tasks or sophisticated workload management. However, it offers a solid starting point that can be customized to meet your specific needs and preferences.
+# But, this isn't complete and there are things missing to this base?
+This was made for a school-like lessons. It's just a stripped base for basic 
+threading operations and isn't made for any complex threading sorting of workloads
+etc. If you have time, you can modify it to your liking.
+
+
