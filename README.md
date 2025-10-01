@@ -2,47 +2,47 @@
 
 A comprehensive, production-ready C++ toolkit for advanced systems programming, featuring modern architecture and professional-grade implementations of low-level Windows operations.
 
-## 🎯 Overview
+## Overview
 
 A sophisticated, modular system demonstrating advanced C++ and Windows API programming techniques. This toolkit provides educational and professional tools for process manipulation, memory operations, graphics overlays, and multi-threading with modern C++17 features, enhanced security, and 64-bit compatibility.
 
-## ⚡ Core Features
+## Core Features
 
-### 🔗 Process Injection
+### Process Injection
 
 - **Manual DLL Mapping**: Advanced PE injection with 64-bit support and relocation handling
 - **LoadLibrary Injection**: Standard library injection methods
 - **Shellcode Injection**: Direct assembly code execution
 - **Process Hijacking**: Advanced process manipulation techniques
 
-### 🧠 Memory Operations
+### Memory Operations
 
 - **Process Attachment**: Safe handle management with RAII principles
 - **Memory Read/Write**: Type-safe operations using uintptr_t addressing
 - **Signature Scanning**: Optimized pattern matching with std::vector
 - **Address Resolution**: Dynamic calculation with 64-bit compatibility
 
-### 🎨 Graphics Overlay
+### Graphics Overlay
 
 - **DirectX9 Integration**: Hardware-accelerated rendering
 - **Window Hijacking**: Seamless overlay integration
 - **Rendering Primitives**: Lines, rectangles, filled shapes
 - **Multi-Monitor Support**: Fullscreen and windowed modes
 
-### 🧵 Threading System
+### Threading System
 
 - **CPU Affinity Control**: Intelligent core distribution
 - **Workload Balancing**: Automatic thread pool management
 - **Performance Monitoring**: Real-time thread statistics
 - **Exception Safety**: Robust error handling in threaded environments
 
-### 🔒 Security Features
+### Security Features
 
 - **Anti-Debugging**: Continuous heartbeat monitoring for debugger detection
 - **Runtime Security**: Automatic alerts and process termination on threats
 - **Ethical Safeguards**: Built-in protections against malicious use
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 
@@ -79,12 +79,12 @@ g++.exe -std=c++17 -fpermissive -o Toolkit.exe main.cpp SafeUtils.cpp CPUInfo.cp
 
 Do **NOT** use this toolkit for:
 
-- ❌ **Cheating in online games** - Violates terms of service
-- ❌ **Malicious software development** - Illegal and unethical
-- ❌ **Unauthorized system access** - Potential legal violations
-- ❌ **Bypassing security measures** - May violate applicable laws
+- **Cheating in online games** - Violates terms of service
+- **Malicious software development** - Illegal and unethical
+- **Unauthorized system access** - Potential legal violations
+- **Bypassing security measures** - May violate applicable laws
 
-## 📚 Learning Resources
+## Learning Resources
 
 Comprehensive examples of:
 
