@@ -20,8 +20,6 @@ overlay::overlay(HWND window)
 	this->d3d_param = {};
 	this->Font = nullptr;
 	this->overlay_window_string = "";
-	//D3DXCreateFont(this->d3d_device, 50, 0, FW_BOLD, 1, 0, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE, "Tahoma", &this->Font);
-
 }
 
 overlay::~overlay()
@@ -108,7 +106,7 @@ HWND hijack::hijack_ol(std::string_view target, std::string_view class_name, LPC
 	for (auto& Process : running_processes)
 	{
 		HANDLE OldProcessHandle = OpenProcess(PROCESS_TERMINATE, FALSE, Process);
-		TerminateProcess(OldProcessHandle, NULL);
+		TerminateProcess(OldProcessHandle, 0);
 		memory::detach(OldProcessHandle);
 	}
 	running_processes.clear();
@@ -209,7 +207,7 @@ void overlay::StartRender(std::string_view to_draw_on, std::string_view game_win
 
 		
 
-		if (PeekMessage(&message, this->draw_window, NULL, NULL, PM_REMOVE))
+		if (PeekMessage(&message, this->draw_window, 0, 0, PM_REMOVE))
 		{
 			TranslateMessage(&message);
 			DispatchMessage(&message);
@@ -262,11 +260,6 @@ void overlay::StartRender(std::string_view to_draw_on, std::string_view game_win
 				this->d3d_device->BeginScene();
 				this->ClearScreen();
 				this->d3d_device->EndScene();
-
-				std::stringstream ss;
-				//ss << "taskkill / f / im " << this->overlay_window_string;
-				//system(ss.str().c_str());
-
 			}
 		}
 		if (GetAsyncKeyState(VK_HOME))

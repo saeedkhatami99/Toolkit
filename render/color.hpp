@@ -1,5 +1,6 @@
 #pragma once
-#include<iostream>
+#include <iostream>
+#include <cmath>
 struct Color
 {
     int red, green, blue, alpha;

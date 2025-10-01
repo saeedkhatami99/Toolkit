@@ -13,7 +13,7 @@ int smpl::get_execution_time(void (*fn)(int), int threads) {
 	std::chrono::duration<long, std::micro> int_usec = int_ms;
 
 	return int_usec.count();
-#endif;
+#endif
 	return 1;
 	
 }
@@ -28,5 +28,27 @@ void smpl::sleep_sec(int s) {
 void smpl::spacer() {
 
 	std::cout << "==============================================================\n";
-	//really retarded, but looks cleaner overall
+	// Looks cleaner overall
+}
+// simple
+bool smpl::is_debugger_present() {
+	return IsDebuggerPresent();
+}
+
+void smpl::heartbeat() {
+	while (true) {
+		if (IsDebuggerPresent()) {
+			// Anti-debug action: terminate or alert
+			MessageBoxA(0, "Debugger detected during heartbeat!", "Security Alert", MB_OK | MB_ICONERROR);
+			exit(1);
+		}
+		Sleep(5000); // Check every 5 seconds
+	}
+}
+
+void smpl::resize_console(int width, int height) {
+	HWND console = GetConsoleWindow();
+	RECT console_rect;
+	GetWindowRect(console, &console_rect);
+	MoveWindow(console, console_rect.left, console_rect.top, width, height, TRUE);
 }

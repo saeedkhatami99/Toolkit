@@ -1,36 +1,27 @@
 #include "memory_fn.hpp"
 #include "../simplified_fn/simplified_fn.hpp"
-
-/*
-	HUGE NOTE: Do not use these functions if you are using any sort of anticheating software. You will be instantly flagged/banned.
-	This applies to the more intrusive anticheats that operate in ring0. Some usermode anticheats could still be bypassed with implementing
-	some additional measures against signature detection or hijacking handles from other legitimate processes. Somewhere in the source I said
-	I will add a way of communicating with a loaded driver so you can read/write through it. Again, most up2date anticheats are flagging 
-	vulnerable and unsigned drivers (as well as the method of mapping those drivers), so use it with caution.
-*/
+#include <cstdint>
 
 
 
 HANDLE memory::attach(const char* process_name, DWORD access_rights) {
 
-	HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, NULL);
+	HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
 	HANDLE process_handle = NULL;
 
 	if (snapshot)
 	{
 		PROCESSENTRY32 pe;
 		pe.dwSize = sizeof(PROCESSENTRY32);
-		wchar_t text_wchar[30];
+		wchar_t w_to_c[256];
 
-		// conversion in case you want to use unicode instead of multibyte character set
-		char w_to_c[256];
-		//sprintf_s(w_to_c, "%ws", pe.szExeFile);
-
+		// Convert process name to wide string for comparison
 		if (Process32First(snapshot, &pe))
 		{
 			do
 			{
-				if (!strcmp(pe.szExeFile, process_name)) // w_to_c = szExeFile
+				// Use strcmp for ANSI comparison
+				if (!strcmp(pe.szExeFile, process_name))
 				{
 					process_handle = OpenProcess(access_rights, false, pe.th32ProcessID);
 				}
@@ -40,7 +31,7 @@ HANDLE memory::attach(const char* process_name, DWORD access_rights) {
 	}
 
 	// sort of a check, testing
-	printf("process_handle(%s): 0x%x\n", process_name, (DWORD)process_handle);
+	printf("process_handle(%s): %p\n", process_name, process_handle);
 
 	if (process_handle) 
 	{ 
@@ -80,7 +71,7 @@ std::vector<unsigned int> memory::get_pid_list(std::string_view process_name)
 
 
 template<typename t>
-inline t memory::read_memory(DWORD address, process Process)
+inline t memory::read_memory(uintptr_t address, process Process)
 {
 	t buffer;
 	ReadProcessMemory(Process.process_handle, (LPCVOID)address, &buffer, sizeof(t), NULL);
@@ -88,7 +79,7 @@ inline t memory::read_memory(DWORD address, process Process)
 }
 
 template<typename t>
-void memory::write_memory(DWORD address, t buffer, HANDLE process)
+void memory::write_memory(uintptr_t address, t buffer, HANDLE process)
 {
 	WriteProcessMemory(process, (LPVOID)address, &buffer, sizeof(t), NULL);
 }
@@ -99,29 +90,28 @@ bool memory::memcmp(const BYTE* data, const BYTE* mask, const char* mask_str) {
 			return false;
 		}
 	}
-	return (*mask_str == NULL);
+	return (*mask_str == '\0');
 }
 
-DWORD memory::find_signature(DWORD start, DWORD size, const char* sig, const char* mask, process Process)
+uintptr_t memory::find_signature(uintptr_t start, size_t size, const char* sig, const char* mask, process Process)
 {
-	BYTE* data = new BYTE[size];
+	std::vector<BYTE> data(size);
 	SIZE_T read_bytes;
 
-	ReadProcessMemory(Process.process_handle, (LPVOID)start, data, size, &read_bytes);
+	ReadProcessMemory(Process.process_handle, (LPVOID)start, data.data(), size, &read_bytes);
 
-	for (DWORD i = 0; i < size; i++)
+	for (size_t i = 0; i < size; i++)
 	{
-		if (memory::memcmp((const BYTE*)(data + i), (const BYTE*)sig, mask)) {
+		if (memory::memcmp(data.data() + i, (const BYTE*)sig, mask)) {
 			return start + i;
 		}
 	}
-	delete[] data;
 	return 0;
 }
 
 void memory::inject_shell( char shellcode[], const char* process_name) {
 
-	HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, NULL);
+	HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
 	HANDLE process_handle = NULL;
 	process info;
 
@@ -129,18 +119,12 @@ void memory::inject_shell( char shellcode[], const char* process_name) {
 	{
 		PROCESSENTRY32 pe;
 		pe.dwSize = sizeof(PROCESSENTRY32);
-		wchar_t text_wchar[30];
-
-		// conversion in case you want to use unicode instead of multibyte character set
-		char w_to_c[256];
-		//sprintf_s(w_to_c, "%ws", pe.szExeFile);
 
 		if (Process32First(snapshot, &pe))
 		{
 			do
 			{
-				// std::cout << "pe.szExeFile: " << pe.szExeFile << std::endl;    --    debuggin' stuff
-				if (!strcmp(pe.szExeFile, process_name)) // w_to_c = szExeFile
+				if (!strcmp(pe.szExeFile, process_name))
 				{
 					std::cout << "[+] pe.szExeFile: " << pe.szExeFile << " -- FOUND " << std::endl;
 					process_handle = OpenProcess(PROCESS_ALL_ACCESS, false, pe.th32ProcessID);
@@ -154,8 +138,8 @@ void memory::inject_shell( char shellcode[], const char* process_name) {
 		std::cout << "Invalid process_handle" << std::endl;
 		return;
 	}
-	DWORD ptr_alloc;
-	ptr_alloc = reinterpret_cast<DWORD>(VirtualAllocEx(process_handle, 0, sizeof(shellcode), MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE));
+	uintptr_t ptr_alloc;
+	ptr_alloc = reinterpret_cast<uintptr_t>(VirtualAllocEx(process_handle, 0, strlen(shellcode), MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE));
 
 	if (ptr_alloc == 0) {
 		std::cout << "Error while injecting shellcode. Couldn't retrieve the base address." << std::endl;

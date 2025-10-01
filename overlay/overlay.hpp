@@ -9,6 +9,7 @@
 #include <Psapi.h>
 #include <vector>
 #include <d3d9.h>
+#include <cstdint>
 #pragma comment(lib, "d3d9.lib")
 #include <d3dx9.h>
 #pragma comment(lib, "d3dx9.lib")
@@ -50,7 +51,6 @@ public:
 class overlay
 {
 private:
-	IDirect3DDevice9* d3d_device;
 	IDirect3D9* d3d;
 	HWND draw_window;
 	std::string_view game_window_string;
@@ -59,6 +59,7 @@ private:
 	LPD3DXFONT Font;
 
 public:
+	IDirect3DDevice9* d3d_device;
 	overlay(HWND Window);
 	~overlay();
 

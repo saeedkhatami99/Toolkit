@@ -1,14 +1,15 @@
 #include "injection.hpp"
 #include "../memory/memory_fn.hpp"
+#include <cstdint>
 
 VOID stub(VOID) { }
 
-DWORD inject::find_pid(string processName)
+uintptr_t inject::find_pid(std::string processName)
 {
 	PROCESSENTRY32 processInfo;
 	processInfo.dwSize = sizeof(processInfo);
 
-	HANDLE processSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, NULL);
+	HANDLE processSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
 	if (processSnapshot == INVALID_HANDLE_VALUE)
 		return 0;
 
@@ -40,7 +41,7 @@ DWORD __stdcall inject::library_load(LPVOID mem)
 
 	PIMAGE_BASE_RELOCATION pIBR = param->BaseReloc;
 
-	DWORD delta = (DWORD)((LPBYTE)param->ImageBase - param->NtHeaders->OptionalHeader.ImageBase);
+	intptr_t delta = (intptr_t)((LPBYTE)param->ImageBase - param->NtHeaders->OptionalHeader.ImageBase);
 
 	while (pIBR->VirtualAddress)
 	{
@@ -78,7 +79,7 @@ DWORD __stdcall inject::library_load(LPVOID mem)
 		{
 			if (OrigFirstThunk->u1.Ordinal & IMAGE_ORDINAL_FLAG)
 			{
-				DWORD Function = (DWORD)param->fnGetProcAddress(hModule,
+				intptr_t Function = (intptr_t)param->fnGetProcAddress(hModule,
 					(LPCSTR)(OrigFirstThunk->u1.Ordinal & 0xFFFF));
 
 				if (!Function)
@@ -89,7 +90,7 @@ DWORD __stdcall inject::library_load(LPVOID mem)
 			else
 			{
 				PIMAGE_IMPORT_BY_NAME pIBN = (PIMAGE_IMPORT_BY_NAME)((LPBYTE)param->ImageBase + OrigFirstThunk->u1.AddressOfData);
-				DWORD Function = (DWORD)param->fnGetProcAddress(hModule, (LPCSTR)pIBN->Name);
+				intptr_t Function = (intptr_t)param->fnGetProcAddress(hModule, (LPCSTR)pIBN->Name);
 				if (!Function)
 					return FALSE;
 
@@ -110,7 +111,7 @@ DWORD __stdcall inject::library_load(LPVOID mem)
 	return TRUE;
 }
 
-void inject::manual_map(string process_name, LPCSTR szDllFile)
+void inject::manual_map(std::string process_name, LPCSTR szDllFile)
 {
 	DWORD pid = inject::find_pid(process_name);
 
@@ -162,8 +163,10 @@ void inject::manual_map(string process_name, LPCSTR szDllFile)
 
 	WriteProcessMemory(hProcess, LoaderMemory, &param, sizeof(inject_data),
 		NULL);
-	WriteProcessMemory(hProcess, (PVOID)((inject_data*)LoaderMemory + 1), inject::library_load,
-		(DWORD)stub - (DWORD)inject::library_load, NULL);
+	char* func_start = reinterpret_cast<char*>(inject::library_load);
+	char* func_end = reinterpret_cast<char*>(stub);
+	size_t func_size = func_end - func_start;
+	WriteProcessMemory(hProcess, (PVOID)((inject_data*)LoaderMemory + 1), func_start, func_size, NULL);
 
 	HANDLE hThread = CreateRemoteThread(hProcess, NULL, 0, (LPTHREAD_START_ROUTINE)((inject_data*)LoaderMemory + 1),
 		LoaderMemory, 0, NULL);
@@ -177,7 +180,8 @@ void inject::manual_map(string process_name, LPCSTR szDllFile)
 
 void inject::load_lib(const char* process_name, const char* dll_name) {
 
-	HANDLE process_handle = OpenProcess(PROCESS_CREATE_THREAD | PROCESS_QUERY_INFORMATION | PROCESS_VM_READ | PROCESS_VM_WRITE | PROCESS_VM_OPERATION, FALSE, (DWORD)memory::attach(process_name, PROCESS_ALL_ACCESS));
+	uintptr_t pid = inject::find_pid(process_name);
+	HANDLE process_handle = OpenProcess(PROCESS_CREATE_THREAD | PROCESS_QUERY_INFORMATION | PROCESS_VM_READ | PROCESS_VM_WRITE | PROCESS_VM_OPERATION, FALSE, (DWORD)pid);
 	char dll[MAX_PATH];
 
 	GetFullPathName(dll_name, MAX_PATH, dll, 0);
@@ -188,8 +192,6 @@ void inject::load_lib(const char* process_name, const char* dll_name) {
 	memory::detach(process_handle);
 
 }
-
-// small typo above 
 
 #define RELOC_FLAG32(RelInfo) ((RelInfo >> 0x0C) == IMAGE_REL_BASED_HIGHLOW)
 #define RELOC_FLAG64(RelInfo) ((RelInfo >> 0x0C) == IMAGE_REL_BASED_DIR64)

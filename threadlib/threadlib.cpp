@@ -2,9 +2,10 @@
 #include <thread>
 #include <Windows.h>
 #include <intrin.h>
+#include <cmath>
 #include "threadlib.hpp"
-#include "workload.hpp"
-#include "simplified_fn.hpp"
+#include "../workload/workload.hpp"
+#include "../simplified_fn/simplified_fn.hpp"
 
 using namespace std;
 
@@ -100,16 +101,7 @@ void thread_lib::print_info(thread_info thread_object) {
 
 	cout << "[*] CPU name: " << thread_object.cpu_name << endl;
 	cout << "[*] Amount of threads: " << thread_object.amount << endl;
-
 }
-
-/*
-void empty_fn(int a) {
-
-	cout << "Test " << a << endl;     no need for this, will remove it if I remember..
-
-}
-*/
 
 void thread_lib::run_workload(thread_info thread_object, thread threads[], bool custom_affinity) {
 

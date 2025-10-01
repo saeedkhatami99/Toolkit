@@ -1,13 +1,12 @@
 #pragma once
-#include<iostream>
+#include <iostream>
 #include <stdint.h>
 #include <Windows.h>
 #include <TlHelp32.h>
+#include <string>
 
 #define ERASE_ENTRY_POINT    TRUE
 #define ERASE_PE_HEADER      TRUE
-
-using namespace std;
 
 
 
@@ -31,9 +30,9 @@ struct inject_data
 
 namespace inject {
 
-    void manual_map(string process_name, LPCSTR szDllFile);
+    void manual_map(std::string process_name, LPCSTR szDllFile);
     void load_lib(const char* process_name, const char* dll_name);
-    DWORD find_pid(string processName);
+    uintptr_t find_pid(std::string processName);
     DWORD __stdcall library_load(LPVOID mem);
 
 

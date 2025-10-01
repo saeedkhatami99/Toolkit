@@ -1,6 +1,9 @@
-#include<iostream>
-#include<Windows.h>
+#include <iostream>
+#include <memory>
+#include <vector>
+#include <Windows.h>
 #include "menu.hpp"
+#include "../SafeUtils.hpp"
 #include "../simplified_fn/simplified_fn.hpp"
 #include "../threadlib/threadlib.hpp"
 #include "../memory/memory_fn.hpp"
@@ -18,8 +21,8 @@ bool menu::select_options() {
 
 	if (cmd == "1") {
 		thread_info thread_information = thread_lib::initialize_info();
-		thread* threads = new thread[thread_information.amount];
-		thread_lib::run_workload(thread_information, threads, false);
+		std::vector<std::thread> threads(thread_information.amount);
+		thread_lib::run_workload(thread_information, threads.data(), false);
 		smpl::sleep_sec(5);
 		return true;
 	}
@@ -69,13 +72,13 @@ bool menu::select_options() {
 		cout << "[?] Enter the program name: ";
 		cin.getline(window_title, 64);
 
-		hijack* hijack_obj = &hijack();
+		hijack hijack_obj;
 
-		HWND hijacked_hwnd = hijack_obj->hijack_ol("notepad.exe", "Notepad", window_title);
-		overlay* overlay_obj = &overlay(hijacked_hwnd);
+		HWND hijacked_hwnd = hijack_obj.hijack_ol("notepad.exe", "Notepad", window_title);
+		overlay overlay_obj(hijacked_hwnd);
 
-		if (overlay_obj->InitiateD3D(hijack_obj->c_window_size_x, hijack_obj->c_window_size_y))
-			overlay_obj->StartRender(hijack_obj->overlay_string, window_title);
+		if (overlay_obj.InitiateD3D(hijack_obj.c_window_size_x, hijack_obj.c_window_size_y))
+			overlay_obj.StartRender(hijack_obj.overlay_string, window_title);
 		return true;
 	}
 
@@ -84,14 +87,12 @@ bool menu::select_options() {
 		return true;
 	}
 
-
-	
-	
+	return false;
 }
 
 void menu::run_menu() {
 
-	system("cls");  // dont ever do this
+	SafeUtils::clearScreen();
 
 	cout << "[=] Available options" << endl;
 	smpl::spacer();
